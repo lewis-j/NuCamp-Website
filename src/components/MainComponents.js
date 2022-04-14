@@ -1,38 +1,77 @@
 import React, { Component } from "react";
 import Directory from "./DirectoryComponents";
-import CampsiteInfo from "./CampsiteInfoComponent";
 import { CAMPSITES } from "../shared/campsites";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
+import { Route, Routes } from "react-router-dom";
+import Home from "./HomeComponent";
+import Contact from "./ContactComponent";
+import { COMMENTS } from "../shared/comments";
+import { PARTNERS } from "../shared/partners";
+import { PROMOTIONS } from "../shared/promotions";
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
       campsites: CAMPSITES,
-      selectedCampsiteId: null,
+      comments: COMMENTS,
+      partners: PARTNERS,
+      promotions: PROMOTIONS,
     };
-  }
-
-  onCampsiteSelect(campsiteId) {
-    this.setState({ selectedCampsiteId: campsiteId });
   }
 
   render() {
     return (
       <div>
         <Header />
-        <Directory
-          campsites={this.state.campsites}
-          onClick={(campsiteId) => this.onCampsiteSelect(campsiteId)}
-        />
-        <CampsiteInfo
-          campsite={
-            this.state.campsites.filter(
-              (campsite) => campsite.id === this.state.selectedCampsiteId
-            )[0]
-          }
-        />
+        <Routes>
+          <Route
+            path="home"
+            element={
+              <Home
+                campsite={
+                  this.state.campsites.filter(
+                    (campsite) => campsite.featured
+                  )[0]
+                }
+                promotion={
+                  this.state.promotions.filter(
+                    (promotion) => promotion.featured
+                  )[0]
+                }
+                partner={
+                  this.state.partners.filter((partner) => partner.featured)[0]
+                }
+              />
+            }
+          />
+          <Route
+            path="directory"
+            element={<Directory campsites={this.state.campsites} />}
+          />
+          <Route path="contactus" element={<Contact />} />
+          <Route
+            path="*"
+            element={
+              <Home
+                campsite={
+                  this.state.campsites.filter(
+                    (campsite) => campsite.featured
+                  )[0]
+                }
+                promotion={
+                  this.state.promotions.filter(
+                    (promotion) => promotion.featured
+                  )[0]
+                }
+                partner={
+                  this.state.partners.filter((partner) => partner.featured)[0]
+                }
+              />
+            }
+          />
+        </Routes>
         <Footer />
       </div>
     );
