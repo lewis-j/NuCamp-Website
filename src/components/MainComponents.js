@@ -1,15 +1,17 @@
 import React from "react";
 import Directory from "./DirectoryComponents";
-import { CAMPSITES } from "../shared/campsites";
+
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import { Route, Routes, useMatch } from "react-router-dom";
 import Home from "./HomeComponent";
 import Contact from "./ContactComponent";
+import { CAMPSITES } from "../shared/campsites";
 import { COMMENTS } from "../shared/comments";
 import { PARTNERS } from "../shared/partners";
 import { PROMOTIONS } from "../shared/promotions";
 import CampsiteInfo from "./CampsiteInfoComponent";
+import About from "./AboutComponent";
 
 const Main = () => {
   //can implement useState but these values do not change with state
@@ -63,6 +65,7 @@ const Main = () => {
         <Route path="/directory/:campsiteId" element={<CampsiteWithId />} />
         <Route path="directory" element={<Directory campsites={campsites} />} />
         <Route path="contactus" element={<Contact />} />
+        <Route path="aboutus" element={<About partners={partners} />} />
 
         <Route
           path="*"
