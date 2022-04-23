@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Nav,
   Navbar,
@@ -10,14 +10,73 @@ import {
   Col,
   Container,
   Row,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Form,
+  FormGroup,
+  Label,
+  Input,
 } from "reactstrap";
 
 import { NavLink } from "react-router-dom";
 
 const HeaderComponent = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const usernameRef = useRef();
+  const passwordRef = useRef();
+  const rememberRef = useRef();
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleLogin = (e) => {
+    console.log("username", usernameRef.current);
+    alert(
+      `Username: ${usernameRef.current.value} Password: ${passwordRef.current.value} Remember: ${rememberRef.current.checked}`
+    );
+    toggleModal();
+    e.preventDefault();
+  };
   return (
     <>
+      <Modal isOpen={isModalOpen} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}>Login</ModalHeader>
+        <ModalBody>
+          <Form onSubmit={handleLogin}>
+            <FormGroup>
+              <Label htmlFor="username">Username</Label>
+              <Input
+                type="text"
+                id="username"
+                name="username"
+                innerRef={usernameRef}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                innerRef={passwordRef}
+              />
+            </FormGroup>
+            <FormGroup check>
+              <Label check>
+                <Input type="checkbox" name="remember" innerRef={rememberRef} />
+                Remember me
+              </Label>
+            </FormGroup>
+            <Button type="submit" value="submit" color="primary">
+              Login
+            </Button>
+          </Form>
+        </ModalBody>
+      </Modal>
       <Jumbotron fluid>
         <Container>
           <Row>
@@ -65,6 +124,11 @@ const HeaderComponent = () => {
                 </NavLink>
               </NavItem>
             </Nav>
+            <span className="navbar-text ml-auto">
+              <Button outline onClick={toggleModal}>
+                <i className="fa fa-sign-in fa-lg" /> Login
+              </Button>
+            </span>
           </Collapse>
         </div>
       </Navbar>
