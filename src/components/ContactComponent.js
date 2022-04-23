@@ -1,8 +1,97 @@
-import React from "react";
-import { Breadcrumb, BreadcrumbItem } from "reactstrap";
+import React, { useState } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Form,
+  FormGroup,
+  FormFeedback,
+  Label,
+  Col,
+  Input,
+  Button,
+} from "reactstrap";
 import { Link } from "react-router-dom";
 
-function Contact(props) {
+const Contact = () => {
+  const initialState = {
+    firstName: "",
+    lastName: "",
+    phoneNum: "",
+    email: "",
+    agree: false,
+    contactType: "By Phone",
+    feedback: "",
+    touched: {
+      firstName: false,
+      lastName: false,
+      phoneNum: false,
+      email: false,
+    },
+  };
+
+  const [values, setValues] = useState(initialState);
+
+  const handleInputChange = (e) => {
+    const { name, value, checked, type } = e.target;
+    const _value = type === "checkbox" ? checked : value;
+
+    setValues({
+      ...values,
+      [name]: _value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    console.log("Current state is: " + JSON.stringify(values));
+    alert("Current state is: " + JSON.stringify(values));
+    e.preventDefault();
+  };
+
+  const validate = ({ firstName, lastName, phoneNum, email, touched }) => {
+    const errors = {
+      firstName: "",
+      lastName: "",
+      phoneNum: "",
+      email: "",
+    };
+
+    if (touched.firstName) {
+      if (firstName.length < 2) {
+        errors.firstName = "First name must be at least 2 characters.";
+      } else if (firstName.length > 15) {
+        errors.firstName = "First name must be 15 or less characters.";
+      }
+    }
+
+    if (touched.lastName) {
+      if (lastName.length < 2) {
+        errors.lastName = "Last name must be at least 2 characters.";
+      } else if (lastName.length > 15) {
+        errors.lastName = "Last name must be 15 or less characters.";
+      }
+    }
+
+    const reg = /^\d+$/;
+    if (touched.phoneNum && !reg.test(phoneNum)) {
+      errors.phoneNum = "The phone number should contain only numbers.";
+    }
+
+    if (touched.email && !email.includes("@")) {
+      errors.email = "Email should contain a @";
+    }
+
+    return errors;
+  };
+
+  const handleBlur = (field) => () => {
+    setValues({ ...values, touched: { ...values.touched, [field]: true } });
+  };
+  const { firstName, lastName, phoneNum, email, agree, contactType, feedback } =
+    values;
+
+  const errors = validate(values);
+  console.log("Errors", errors);
+
   return (
     <div className="container">
       <div className="row">
@@ -43,8 +132,137 @@ function Contact(props) {
           </a>
         </div>
       </div>
+      <div className="row row-content">
+        <div className="col-12">
+          <h2>Send us your Feedback</h2>
+          <hr />
+        </div>
+        <div className="col-md-10">
+          <Form onSubmit={handleSubmit}>
+            <FormGroup row>
+              <Label htmlFor="firstName" md={2}>
+                First Name
+              </Label>
+              <Col md={10}>
+                <Input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  placeholder="First Name"
+                  value={firstName}
+                  invalid={errors.firstName}
+                  onBlur={handleBlur("firstName")}
+                  onChange={handleInputChange}
+                />
+                <FormFeedback>{errors.firstName}</FormFeedback>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label htmlFor="lastName" md={2}>
+                Last Name
+              </Label>
+              <Col md={10}>
+                <Input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Last Name"
+                  value={lastName}
+                  invalid={errors.lastName}
+                  onBlur={handleBlur("lastName")}
+                  onChange={handleInputChange}
+                />
+                <FormFeedback>{errors.lastName}</FormFeedback>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label htmlFor="phoneNum" md={2}>
+                Phone
+              </Label>
+              <Col md={10}>
+                <Input
+                  type="tel"
+                  id="phoneNum"
+                  name="phoneNum"
+                  placeholder="Phone number"
+                  value={phoneNum}
+                  invalid={errors.phoneNum}
+                  onBlur={handleBlur("phoneNum")}
+                  onChange={handleInputChange}
+                />
+                <FormFeedback>{errors.phoneNum}</FormFeedback>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label htmlFor="email" md={2}>
+                Email
+              </Label>
+              <Col md={10}>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  value={email}
+                  invalid={errors.email}
+                  onBlur={handleBlur("email")}
+                  onChange={handleInputChange}
+                />
+                <FormFeedback>{errors.email}</FormFeedback>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Col md={{ size: 4, offset: 2 }}>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type="checkbox"
+                      name="agree"
+                      checked={agree}
+                      onChange={handleInputChange}
+                    />{" "}
+                    <strong>May we contact you?</strong>
+                  </Label>
+                </FormGroup>
+              </Col>
+              <Col md={4}>
+                <Input
+                  type="select"
+                  name="contactType"
+                  value={contactType}
+                  onChange={handleInputChange}
+                >
+                  <option>By Phone</option>
+                  <option>By Email</option>
+                </Input>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label htmlFor="feedback" md={2}>
+                Your Feedback
+              </Label>
+              <Col md={10}>
+                <Input
+                  type="textarea"
+                  id="feedback"
+                  name="feedback"
+                  rows="12"
+                  value={feedback}
+                  onChange={handleInputChange}
+                ></Input>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Col md={{ size: 10, offset: 2 }}>
+                <Button type="submit" color="primary">
+                  Send Feedback
+                </Button>
+              </Col>
+            </FormGroup>
+          </Form>
+        </div>
+      </div>
     </div>
   );
-}
-
+};
 export default Contact;
