@@ -1,26 +1,31 @@
 import React from "react";
 import Directory from "./DirectoryComponents";
-
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import { Route, Routes, useMatch } from "react-router-dom";
 import Home from "./HomeComponent";
 import Contact from "./ContactComponent";
-import { CAMPSITES } from "../shared/campsites";
-import { COMMENTS } from "../shared/comments";
-import { PARTNERS } from "../shared/partners";
-import { PROMOTIONS } from "../shared/promotions";
 import CampsiteInfo from "./CampsiteInfoComponent";
 import About from "./AboutComponent";
+import { connect } from "react-redux";
+import { addComment } from "../redux/ActionCreators";
 
-const Main = () => {
-  //can implement useState but these values do not change with state
-  //using react-router-dom V6
-  const campsites = CAMPSITES;
-  const comments = COMMENTS;
-  const partners = PARTNERS;
-  const promotions = PROMOTIONS;
+const mapStateToProps = (state) => {
+  return {
+    campsites: state.campsites,
+    comments: state.comments,
+    partners: state.partners,
+    promotions: state.promotions,
+  };
+};
 
+const mapDispatchToProps = {
+  addComment: (campsiteId, rating, author, text) =>
+    addComment(campsiteId, rating, author, text),
+};
+
+const Main = ({ campsites, comments, promotions, partners, addComment }) => {
+  console.log("comments in main", comments);
   const CampsiteWithId = () => {
     const match = useMatch("/directory/:campsiteId");
 
@@ -35,6 +40,7 @@ const Main = () => {
           comments={comments.filter(
             (comment) => comment.campsiteId === +match.params.campsiteId
           )}
+          addComment={addComment}
         />
       );
     }
@@ -83,4 +89,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

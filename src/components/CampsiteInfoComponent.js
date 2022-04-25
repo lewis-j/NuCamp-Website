@@ -7,8 +7,116 @@ import {
   Card,
   Breadcrumb,
   BreadcrumbItem,
+  Button,
+  Modal,
+  ModalBody,
+  Label,
+  ModalHeader,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Control, LocalForm, Errors } from "react-redux-form";
+
+class CommentForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isModalOpen: false,
+    };
+  }
+
+  handleSubmit = (values) => {
+    console.log("Current state is: " + JSON.stringify(values));
+    alert("Current state is: " + JSON.stringify(values));
+    this.props.addComment(
+      this.props.campsiteId,
+      +values.rating,
+      values.author,
+      values.text
+    );
+    this.toggleModal();
+  };
+
+  toggleModal = () => {
+    this.setState({
+      isModalOpen: !this.state.isModalOpen,
+    });
+  };
+  render() {
+    const required = (val) => val && val.length;
+    const maxLength = (len) => (val) => !val || val.length <= len;
+    const minLength = (len) => (val) => val && val.length >= len;
+    const { isModalOpen } = this.state;
+    return (
+      <>
+        <Modal isOpen={isModalOpen} toggle={this.toggleModal}>
+          <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+          <ModalBody>
+            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+              <Label htmlFor="rating" md={12}>
+                Rating
+              </Label>
+              <Control.select
+                model=".rating"
+                id="rating"
+                name="rating"
+                className="form-control"
+                defaultValue={"1"}
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </Control.select>
+              <Label htmlFor="author" md={12}>
+                Name
+              </Label>
+              <Control.text
+                model=".author"
+                id="author"
+                name="author"
+                className="form-control"
+                validators={{
+                  required,
+                  minLength: minLength(2),
+                  maxLength: maxLength(15),
+                }}
+              ></Control.text>
+              <Errors
+                className="text-danger"
+                model=".author"
+                show="touched"
+                component="div"
+                messages={{
+                  required: "Required",
+                  minLength: "Must be at least 2 characters",
+                  maxLength: "Must be 15 characters or less",
+                }}
+              />
+
+              <Label htmlFor="comment" md={12}>
+                Comment
+              </Label>
+              <Control.textarea
+                model=".text"
+                id="text"
+                name="text"
+                className="form-control"
+              ></Control.textarea>
+              <Button type="submit" color="primary">
+                Submit
+              </Button>
+            </LocalForm>
+          </ModalBody>
+        </Modal>
+        <Button outline onClick={this.toggleModal}>
+          <i className="fa fa-pencil" /> Submit Comment
+        </Button>
+      </>
+    );
+  }
+}
 
 const RenderCampsite = ({ campsite: { name, image, description } }) => {
   return (
@@ -24,7 +132,7 @@ const RenderCampsite = ({ campsite: { name, image, description } }) => {
   );
 };
 
-const RenderComments = ({ comments }) => {
+const RenderComments = ({ comments, campsiteId, addComment }) => {
   if (comments) {
     const renderedCommentsList = comments.map((comment, id) => {
       const date = new Intl.DateTimeFormat("en-US", {
@@ -47,13 +155,15 @@ const RenderComments = ({ comments }) => {
       <div className="col-md-5 m-1">
         <h4>Comments</h4>
         {renderedCommentsList}
+        <CommentForm addComment={addComment} campsiteId={campsiteId} />
       </div>
     );
   }
   return <div />;
 };
 
-const CampsiteInfo = ({ campsite, comment }) => {
+const CampsiteInfo = ({ campsite, comments, addComment }) => {
+  console.log("comment", comments);
   if (campsite) {
     return (
       <div className="container">
@@ -71,7 +181,11 @@ const CampsiteInfo = ({ campsite, comment }) => {
         </div>
         <div className="row">
           <RenderCampsite campsite={campsite} />
-          <RenderComments comments={comment} />
+          <RenderComments
+            comments={comments}
+            addComment={addComment}
+            campsiteId={campsite.id}
+          />
         </div>
       </div>
     );
