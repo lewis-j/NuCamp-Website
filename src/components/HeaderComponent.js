@@ -34,7 +34,6 @@ const HeaderComponent = () => {
   };
 
   const handleLogin = (e) => {
-    console.log("username", usernameRef.current);
     alert(
       `Username: ${usernameRef.current.value} Password: ${passwordRef.current.value} Remember: ${rememberRef.current.checked}`
     );

@@ -8,7 +8,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
 } from "reactstrap";
-import CampsiteInfo from "./CampsiteInfoComponent";
+import { Loading } from "./LoadingComponent";
 
 const RenderDirectoryItem = ({ campsite }) => {
   return (
@@ -23,11 +23,31 @@ const RenderDirectoryItem = ({ campsite }) => {
   );
 };
 
-const Directory = ({ campsites, onClick }) => {
-  const directory = campsites.map((campsite) => {
+const Directory = ({ campsites }) => {
+  if (campsites.isLoading) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <Loading />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (campsites.errMess) {
+    <div className="container">
+      <div className="row">
+        <div className="col">
+          <h4>campsites.errMess</h4>
+        </div>
+      </div>
+    </div>;
+  }
+  const directory = campsites.campsites.map((campsite) => {
     return (
       <div key={campsite.id} className="col-md-5 m-1">
-        <RenderDirectoryItem campsite={campsite} onClick={onClick} />
+        <RenderDirectoryItem campsite={campsite} />
       </div>
     );
   });

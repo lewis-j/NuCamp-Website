@@ -1,16 +1,14 @@
 import React from "react";
-import {
-  Container,
-  Card,
-  CardTitle,
-  CardText,
-  CardBody,
-  CardImg,
-} from "reactstrap";
+import { Card, CardTitle, CardText, CardBody, CardImg } from "reactstrap";
+import { Loading } from "./LoadingComponent";
 
-function RenderCard({ item }) {
-  console.log("Item", item);
-
+function RenderCard({ item, isLoading, errMess }) {
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (errMess) {
+    return <h4>{errMess}</h4>;
+  }
   return (
     <Card>
       <CardImg src={item.image} alt={item.name} />
@@ -23,12 +21,15 @@ function RenderCard({ item }) {
 }
 
 function Home(props) {
-  console.log("props", props);
   return (
     <div className="container">
       <div className="row">
         <div className="col-md m-1">
-          <RenderCard item={props.campsite} />
+          <RenderCard
+            item={props.campsite}
+            isLoading={props.isLoading}
+            errMess={props.errMess}
+          />
         </div>
         <div className="col-md m-1">
           <RenderCard item={props.promotion} />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Directory from "./DirectoryComponents";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
@@ -8,7 +8,7 @@ import Contact from "./ContactComponent";
 import CampsiteInfo from "./CampsiteInfoComponent";
 import About from "./AboutComponent";
 import { connect } from "react-redux";
-import { addComment } from "../redux/ActionCreators";
+import { addComment, fetchCampsites } from "../redux/ActionCreators";
 
 const mapStateToProps = (state) => {
   return {
@@ -22,10 +22,21 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   addComment: (campsiteId, rating, author, text) =>
     addComment(campsiteId, rating, author, text),
+  fetchCampsites: () => fetchCampsites(),
 };
 
-const Main = ({ campsites, comments, promotions, partners, addComment }) => {
-  console.log("comments in main", comments);
+const Main = ({
+  campsites,
+  comments,
+  promotions,
+  partners,
+  addComment,
+  fetchCampsites,
+}) => {
+  useEffect(() => {
+    fetchCampsites();
+  }, []);
+
   const CampsiteWithId = () => {
     const match = useMatch("/directory/:campsiteId");
 
@@ -33,7 +44,7 @@ const Main = ({ campsites, comments, promotions, partners, addComment }) => {
       return (
         <CampsiteInfo
           campsite={
-            campsites.filter(
+            campsites.campsites.filter(
               (campsite) => campsite.id === +match.params.campsiteId
             )[0]
           }
@@ -41,12 +52,16 @@ const Main = ({ campsites, comments, promotions, partners, addComment }) => {
             (comment) => comment.campsiteId === +match.params.campsiteId
           )}
           addComment={addComment}
+          isLoading={campsites.isLoading}
+          errMess={campsites.errMess}
         />
       );
     }
   };
 
-  const featuredCampsite = campsites.filter((campsite) => campsite.featured)[0];
+  const featuredCampsite = campsites.campsites.filter(
+    (campsite) => campsite.featured
+  )[0];
 
   const featuredPromotion = promotions.filter(
     (promotion) => promotion.featured
@@ -63,6 +78,8 @@ const Main = ({ campsites, comments, promotions, partners, addComment }) => {
           element={
             <Home
               campsite={featuredCampsite}
+              isLoading={campsites.isLoading}
+              errMess={campsites.errMess}
               promotion={featuredPromotion}
               partner={featuredPartner}
             />
@@ -78,6 +95,8 @@ const Main = ({ campsites, comments, promotions, partners, addComment }) => {
           element={
             <Home
               campsite={featuredCampsite}
+              isLoading={campsites.isLoading}
+              errMess={campsites.errMess}
               promotion={featuredPromotion}
               partner={featuredPartner}
             />

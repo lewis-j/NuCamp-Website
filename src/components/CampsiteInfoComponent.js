@@ -15,6 +15,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { Control, LocalForm, Errors } from "react-redux-form";
+import { Loading } from "./LoadingComponent";
 
 class CommentForm extends React.Component {
   constructor(props) {
@@ -25,7 +26,6 @@ class CommentForm extends React.Component {
   }
 
   handleSubmit = (values) => {
-    console.log("Current state is: " + JSON.stringify(values));
     alert("Current state is: " + JSON.stringify(values));
     this.props.addComment(
       this.props.campsiteId,
@@ -162,8 +162,35 @@ const RenderComments = ({ comments, campsiteId, addComment }) => {
   return <div />;
 };
 
-const CampsiteInfo = ({ campsite, comments, addComment }) => {
-  console.log("comment", comments);
+const CampsiteInfo = ({
+  campsite,
+  comments,
+  addComment,
+  isLoading,
+  errMess,
+}) => {
+  if (isLoading) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <Loading />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (errMess) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <h4>{errMess}</h4>;
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (campsite) {
     return (
       <div className="container">
