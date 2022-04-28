@@ -9,6 +9,7 @@ import CampsiteInfo from "./CampsiteInfoComponent";
 import About from "./AboutComponent";
 import { connect } from "react-redux";
 import { addComment, fetchCampsites } from "../redux/ActionCreators";
+import { actions } from "react-redux-form";
 
 const mapStateToProps = (state) => {
   return {
@@ -23,6 +24,7 @@ const mapDispatchToProps = {
   addComment: (campsiteId, rating, author, text) =>
     addComment(campsiteId, rating, author, text),
   fetchCampsites: () => fetchCampsites(),
+  resetFeedbackForm: () => actions.reset("feedbackFrom"),
 };
 
 const Main = ({
@@ -32,6 +34,7 @@ const Main = ({
   partners,
   addComment,
   fetchCampsites,
+  resetFeedbackForm,
 }) => {
   useEffect(() => {
     fetchCampsites();
@@ -87,7 +90,10 @@ const Main = ({
         />
         <Route path="/directory/:campsiteId" element={<CampsiteWithId />} />
         <Route path="directory" element={<Directory campsites={campsites} />} />
-        <Route path="contactus" element={<Contact />} />
+        <Route
+          path="contactus"
+          element={<Contact resetFeedbackForm={resetFeedbackForm} />}
+        />
         <Route path="aboutus" element={<About partners={partners} />} />
 
         <Route

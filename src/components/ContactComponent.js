@@ -3,7 +3,7 @@ import { Breadcrumb, BreadcrumbItem } from "reactstrap";
 import { Link } from "react-router-dom";
 import ContactForm from "./ContactForm";
 
-const Contact = () => {
+const Contact = ({ resetFeedbackForm }) => {
   return (
     <div className="container">
       <div className="row">
@@ -50,7 +50,7 @@ const Contact = () => {
           <hr />
         </div>
         <div className="col-md-10">
-          <ContactForm />
+          <ContactForm resetFeedbackForm={resetFeedbackForm} />
         </div>
       </div>
     </div>
