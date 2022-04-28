@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { baseUrl } from "../shared/baseUrl";
 import {
   Card,
   CardImg,
@@ -14,7 +15,11 @@ const RenderDirectoryItem = ({ campsite }) => {
   return (
     <Card>
       <Link to={`/directory/${campsite.id}`}>
-        <CardImg width="100%" src={campsite.image} alt={campsite.name} />
+        <CardImg
+          width="100%"
+          src={baseUrl + campsite.image}
+          alt={campsite.name}
+        />
         <CardImgOverlay>
           <CardTitle>{campsite.name}</CardTitle>
         </CardImgOverlay>

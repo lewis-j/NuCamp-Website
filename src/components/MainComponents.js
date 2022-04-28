@@ -8,7 +8,12 @@ import Contact from "./ContactComponent";
 import CampsiteInfo from "./CampsiteInfoComponent";
 import About from "./AboutComponent";
 import { connect } from "react-redux";
-import { addComment, fetchCampsites } from "../redux/ActionCreators";
+import {
+  addComment,
+  fetchCampsites,
+  fetchComments,
+  fetchPromotions,
+} from "../redux/ActionCreators";
 import { actions } from "react-redux-form";
 
 const mapStateToProps = (state) => {
@@ -24,7 +29,9 @@ const mapDispatchToProps = {
   addComment: (campsiteId, rating, author, text) =>
     addComment(campsiteId, rating, author, text),
   fetchCampsites: () => fetchCampsites(),
-  resetFeedbackForm: () => actions.reset("feedbackFrom"),
+  resetFeedbackForm: () => actions.reset("feedbackForm"),
+  fetchComments: () => fetchComments(),
+  fetchPromotions: () => fetchPromotions(),
 };
 
 const Main = ({
@@ -34,10 +41,14 @@ const Main = ({
   partners,
   addComment,
   fetchCampsites,
+  fetchComments,
+  fetchPromotions,
   resetFeedbackForm,
 }) => {
   useEffect(() => {
     fetchCampsites();
+    fetchComments();
+    fetchPromotions();
   }, []);
 
   const CampsiteWithId = () => {
@@ -55,6 +66,7 @@ const Main = ({
             (comment) => comment.campsiteId === +match.params.campsiteId
           )}
           addComment={addComment}
+          commentsErrMess={comments.errMess}
           isLoading={campsites.isLoading}
           errMess={campsites.errMess}
         />
@@ -66,7 +78,7 @@ const Main = ({
     (campsite) => campsite.featured
   )[0];
 
-  const featuredPromotion = promotions.filter(
+  const featuredPromotion = promotions.promotions.filter(
     (promotion) => promotion.featured
   )[0];
 
@@ -81,9 +93,11 @@ const Main = ({
           element={
             <Home
               campsite={featuredCampsite}
-              isLoading={campsites.isLoading}
-              errMess={campsites.errMess}
+              campsitesLoading={campsites.isLoading}
+              campsitesErrMess={campsites.errMess}
               promotion={featuredPromotion}
+              promotionLoading={promotions.isLoading}
+              promotionErrMess={promotions.errMess}
               partner={featuredPartner}
             />
           }
@@ -101,9 +115,11 @@ const Main = ({
           element={
             <Home
               campsite={featuredCampsite}
-              isLoading={campsites.isLoading}
-              errMess={campsites.errMess}
+              campsitesLoading={campsites.isLoading}
+              campsitesErrMess={campsites.errMess}
               promotion={featuredPromotion}
+              promotionLoading={promotions.isLoading}
+              promotionErrMess={promotions.errMess}
               partner={featuredPartner}
             />
           }
