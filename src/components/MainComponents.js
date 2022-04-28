@@ -9,7 +9,7 @@ import CampsiteInfo from "./CampsiteInfoComponent";
 import About from "./AboutComponent";
 import { connect } from "react-redux";
 import {
-  addComment,
+  postComment,
   fetchCampsites,
   fetchComments,
   fetchPromotions,
@@ -26,8 +26,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  addComment: (campsiteId, rating, author, text) =>
-    addComment(campsiteId, rating, author, text),
+  postComment: (campsiteId, rating, author, text) =>
+    postComment(campsiteId, rating, author, text),
   fetchCampsites: () => fetchCampsites(),
   resetFeedbackForm: () => actions.reset("feedbackForm"),
   fetchComments: () => fetchComments(),
@@ -39,7 +39,7 @@ const Main = ({
   comments,
   promotions,
   partners,
-  addComment,
+  postComment,
   fetchCampsites,
   fetchComments,
   fetchPromotions,
@@ -62,13 +62,13 @@ const Main = ({
               (campsite) => campsite.id === +match.params.campsiteId
             )[0]
           }
-          comments={comments.filter(
+          comments={comments.comments.filter(
             (comment) => comment.campsiteId === +match.params.campsiteId
           )}
-          addComment={addComment}
           commentsErrMess={comments.errMess}
           isLoading={campsites.isLoading}
           errMess={campsites.errMess}
+          postComment={postComment}
         />
       );
     }

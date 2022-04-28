@@ -24,17 +24,18 @@ class CommentForm extends React.Component {
     this.state = {
       isModalOpen: false,
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit = (values) => {
-    alert("Current state is: " + JSON.stringify(values));
-    this.props.addComment(
+    console.log("submit comment", values, this.props.postComment);
+    this.toggleModal();
+    this.props.postComment(
       this.props.campsiteId,
-      +values.rating,
+      values.rating,
       values.author,
       values.text
     );
-    this.toggleModal();
   };
 
   toggleModal = () => {
@@ -133,7 +134,7 @@ const RenderCampsite = ({ campsite: { name, image, description } }) => {
   );
 };
 
-const RenderComments = ({ comments, campsiteId, addComment }) => {
+const RenderComments = ({ comments, campsiteId, postComment }) => {
   if (comments) {
     const renderedCommentsList = comments.map((comment, id) => {
       const date = new Intl.DateTimeFormat("en-US", {
@@ -156,7 +157,7 @@ const RenderComments = ({ comments, campsiteId, addComment }) => {
       <div className="col-md-5 m-1">
         <h4>Comments</h4>
         {renderedCommentsList}
-        <CommentForm addComment={addComment} campsiteId={campsiteId} />
+        <CommentForm postComment={postComment} campsiteId={campsiteId} />
       </div>
     );
   }
@@ -166,7 +167,7 @@ const RenderComments = ({ comments, campsiteId, addComment }) => {
 const CampsiteInfo = ({
   campsite,
   comments,
-  addComment,
+  postComment,
   isLoading,
   errMess,
 }) => {
@@ -211,7 +212,7 @@ const CampsiteInfo = ({
           <RenderCampsite campsite={campsite} />
           <RenderComments
             comments={comments}
-            addComment={addComment}
+            postComment={postComment}
             campsiteId={campsite.id}
           />
         </div>
