@@ -17,6 +17,7 @@ import { baseUrl } from "../shared/baseUrl";
 import { Link } from "react-router-dom";
 import { Control, LocalForm, Errors } from "react-redux-form";
 import { Loading } from "./LoadingComponent";
+import { FadeTransform, Fade, Stagger } from "react-animation-components";
 
 class CommentForm extends React.Component {
   constructor(props) {
@@ -123,13 +124,20 @@ class CommentForm extends React.Component {
 const RenderCampsite = ({ campsite: { name, image, description } }) => {
   return (
     <div className="col-md-5 m-1">
-      <Card>
-        <CardImg top src={baseUrl + image} alt={name} />
-        <CardBody>
-          <CardTitle>{name}</CardTitle>
-          <CardText>{description}</CardText>
-        </CardBody>
-      </Card>
+      <FadeTransform
+        in
+        transformProps={{
+          exitTransform: "scale(0.5) translateY(-50%)",
+        }}
+      >
+        <Card>
+          <CardImg top src={baseUrl + image} alt={name} />
+          <CardBody>
+            <CardTitle>{name}</CardTitle>
+            <CardText>{description}</CardText>
+          </CardBody>
+        </Card>
+      </FadeTransform>
     </div>
   );
 };
@@ -144,20 +152,24 @@ const RenderComments = ({ comments, campsiteId, postComment }) => {
       }).format(new Date(Date.parse(comment.date)));
 
       return (
-        <div key={comment.id}>
-          <p>{comment.text}</p>
-          <p>
-            --{comment.author} {date}
-          </p>
-        </div>
+        <Fade in key={comment.id}>
+          <div>
+            <p>{comment.text}</p>
+            <p>
+              --{comment.author} {date}
+            </p>
+          </div>
+        </Fade>
       );
     });
 
     return (
       <div className="col-md-5 m-1">
         <h4>Comments</h4>
-        {renderedCommentsList}
-        <CommentForm postComment={postComment} campsiteId={campsiteId} />
+        <Stagger in>
+          {renderedCommentsList}
+          <CommentForm postComment={postComment} campsiteId={campsiteId} />
+        </Stagger>
       </div>
     );
   }

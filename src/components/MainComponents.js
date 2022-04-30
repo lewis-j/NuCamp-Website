@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Directory from "./DirectoryComponents";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
-import { Route, Routes, useMatch } from "react-router-dom";
+import { Route, Routes, useMatch, useLocation } from "react-router-dom";
 import Home from "./HomeComponent";
 import Contact from "./ContactComponent";
 import CampsiteInfo from "./CampsiteInfoComponent";
@@ -15,6 +15,7 @@ import {
   fetchPromotions,
 } from "../redux/ActionCreators";
 import { actions } from "react-redux-form";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 const mapStateToProps = (state) => {
   return {
@@ -50,6 +51,10 @@ const Main = ({
     fetchComments();
     fetchPromotions();
   }, []);
+
+  const location = useLocation();
+
+  console.log("location", location);
 
   const CampsiteWithId = () => {
     const match = useMatch("/directory/:campsiteId");
@@ -87,44 +92,51 @@ const Main = ({
   return (
     <div>
       <Header />
-      <Routes>
-        <Route
-          path="home"
-          element={
-            <Home
-              campsite={featuredCampsite}
-              campsitesLoading={campsites.isLoading}
-              campsitesErrMess={campsites.errMess}
-              promotion={featuredPromotion}
-              promotionLoading={promotions.isLoading}
-              promotionErrMess={promotions.errMess}
-              partner={featuredPartner}
+      <TransitionGroup>
+        <CSSTransition key={location.key} classNames="page" timeout={300}>
+          <Routes>
+            <Route
+              path="home"
+              element={
+                <Home
+                  campsite={featuredCampsite}
+                  campsitesLoading={campsites.isLoading}
+                  campsitesErrMess={campsites.errMess}
+                  promotion={featuredPromotion}
+                  promotionLoading={promotions.isLoading}
+                  promotionErrMess={promotions.errMess}
+                  partner={featuredPartner}
+                />
+              }
             />
-          }
-        />
-        <Route path="/directory/:campsiteId" element={<CampsiteWithId />} />
-        <Route path="directory" element={<Directory campsites={campsites} />} />
-        <Route
-          path="contactus"
-          element={<Contact resetFeedbackForm={resetFeedbackForm} />}
-        />
-        <Route path="aboutus" element={<About partners={partners} />} />
+            <Route path="/directory/:campsiteId" element={<CampsiteWithId />} />
+            <Route
+              path="directory"
+              element={<Directory campsites={campsites} />}
+            />
+            <Route
+              path="contactus"
+              element={<Contact resetFeedbackForm={resetFeedbackForm} />}
+            />
+            <Route path="aboutus" element={<About partners={partners} />} />
 
-        <Route
-          path="*"
-          element={
-            <Home
-              campsite={featuredCampsite}
-              campsitesLoading={campsites.isLoading}
-              campsitesErrMess={campsites.errMess}
-              promotion={featuredPromotion}
-              promotionLoading={promotions.isLoading}
-              promotionErrMess={promotions.errMess}
-              partner={featuredPartner}
+            <Route
+              path="*"
+              element={
+                <Home
+                  campsite={featuredCampsite}
+                  campsitesLoading={campsites.isLoading}
+                  campsitesErrMess={campsites.errMess}
+                  promotion={featuredPromotion}
+                  promotionLoading={promotions.isLoading}
+                  promotionErrMess={promotions.errMess}
+                  partner={featuredPartner}
+                />
+              }
             />
-          }
-        />
-      </Routes>
+          </Routes>
+        </CSSTransition>
+      </TransitionGroup>
       <Footer />
     </div>
   );
